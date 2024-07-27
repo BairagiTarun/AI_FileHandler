@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload and Search Files</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'fileapp/styles.css' %}">
+</head>
+<body>
+    <h1>Upload and Search Files</h1>
+
+    <div class="container">
+        <h2>Upload File</h2>
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            {{ upload_form.as_p }}
+            <button type="submit" name="upload">Upload</button>
+        </form>
+        <div id="uploadMessage"></div>
+    </div>
+
+    <div class="container">
+        <h2>Search Files</h2>
+        <form method="post" id="searchForm">
+            {% csrf_token %}
+            {{ search_form.as_p }}
+            <button type="submit" name="search">Search</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Search Results</h2>
+        <div id="searchResults">
+            {% if files %}
+                <ul>
+                {% for file in files %}
+                    <li>
+                        {{ file.file_name }}
+                        <a href="{% url 'view_file' file.id %}"><button>View File</button></a>
+                        <a href="{% url 'download_file' file.id %}"><button>Download File</button></a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No files found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

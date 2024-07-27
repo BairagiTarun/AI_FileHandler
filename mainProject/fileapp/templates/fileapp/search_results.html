@@ -1,0 +1,6 @@
+<h1>Search Results</h1>
+<ul>
+    {% for file in files %}
+    <li><a href="{% url 'view_file' file.id %}">{{ file.file_name }}</a></li>
+    {% endfor %}
+</ul>

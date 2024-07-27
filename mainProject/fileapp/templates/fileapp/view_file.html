@@ -1,0 +1,117 @@
+<!-- Example Django template snippet -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File List</title>
+</head>
+<body>
+
+{% for file in files %}
+    <div>
+        <h3>{{ file.file_name }}</h3>
+        <a href="{{ file.file_content.url }}">View</a>
+    </div>
+{% endfor %}
+
+<div id="file-container"></div>
+
+<script>
+    function displayFile(filePath, fileName) {
+        const fileContainer = document.getElementById('file-container');
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+        let element;
+
+        switch (fileExtension) {
+            case 'txt':
+            case 'csv':
+                element = document.createElement('pre');
+                fetch(filePath)
+                    .then(response => response.text())
+                    .then(text => element.textContent = text);
+                break;
+
+            case 'pdf':
+                element = document.createElement('embed');
+                element.src = filePath;
+                element.type = 'application/pdf';
+                element.width = '100%';
+                element.height = '600px';
+                break;
+
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+                element = document.createElement('img');
+                element.src = filePath;
+                element.alt = 'Image';
+                element.width = '100%';
+                break;
+
+            case 'mp4':
+            case 'webm':
+                element = document.createElement('video');
+                element.controls = true;
+                element.width = '100%';
+                const videoSource = document.createElement('source');
+                videoSource.src = filePath;
+                videoSource.type = `video/${fileExtension}`;
+                element.appendChild(videoSource);
+                break;
+
+            case 'mp3':
+            case 'ogg':
+                element = document.createElement('audio');
+                element.controls = true;
+                const audioSource = document.createElement('source');
+                audioSource.src = filePath;
+                audioSource.type = `audio/${fileExtension}`;
+                element.appendChild(audioSource);
+                break;
+
+            case 'docx':
+            case 'pptx':
+            case 'xlsx':
+                element = document.createElement('iframe');
+                element.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(filePath)}`;
+                element.width = '100%';
+                element.height = '600px';
+                break;
+
+            case 'html':
+                element = document.createElement('iframe');
+                element.src = filePath;
+                element.width = '100%';
+                element.height = '600px';
+                break;
+
+            default:
+                element = document.createElement('a');
+                element.href = filePath;
+                element.download = '';
+                element.textContent = 'Download File';
+        }
+
+        fileContainer.innerHTML = '';
+        fileContainer.appendChild(element);
+    }
+
+    // Example usage when clicking "View" link
+    const viewLinks = document.querySelectorAll('a[href^="{{ file.url }}"]');
+    viewLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const viewUrl = link.href;
+
+            // Fetch file details dynamically from backend
+            const fileName = link.textContent.trim(); // Assuming file name is displayed as link text
+            displayFile(viewUrl, fileName);
+        });
+    });
+</script>
+
+</body>
+</html>
