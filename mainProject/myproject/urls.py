@@ -1,8 +1,14 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include  # Import include to include app URLs
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('fileapp/', include('fileapp.urls')),  # Include the fileapp URLs
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('admin/', admin.site.urls),  # Django admin site URL
+    path('api/', include('fileapp.urls')),  # Include URLs from the 'fileapp' app
+]
+
+# Serving static and media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
